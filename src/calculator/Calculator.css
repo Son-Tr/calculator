@@ -30,7 +30,7 @@ body {
 }
 
 .operation{
-  
+  font-size: 1rem;
  margin-left: 0.25rem;
 }
 
@@ -43,7 +43,7 @@ body {
   margin: .5rem 0;
 }
 .small-font{
-  font-size: 3rem !important;
+  font-size: 2.5rem !important;
 }
 
 .normal-font{
@@ -84,3 +84,4 @@ button {
 #equals {
   grid-column: 3/5;
 }
+

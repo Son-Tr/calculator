@@ -17,11 +17,22 @@ export default class Calculator extends Component {
     let { number } = this.state;
     num = num.toString();
 
+     // Prevent adding multiple decimal points
+     if (num === '.' && number.includes('.')) {
+      return;
+    }
+
     // If number is '0', replace it with the new number clicked
-    if (number === '0') {
+    if (number === '0' && num !== '.') {
       number = num;
     } else {
       number += num;
+    }
+
+    // limmit the length of the number to 13 character
+    if (number.length > 13){
+     number= number.slice(0,13);
+     alert("Limmit the length of number is 13 characters")
     }
 
     // Update the state with the formatted number,Call updateFontSize after setting state
@@ -33,21 +44,18 @@ export default class Calculator extends Component {
   /* ------------------------------ fotmat number ----------------------------- */
     formatNumber = (number) => {
 
-      let numberStr =String(number)
-      // Remove dot and commas for proper conversion to a number
-      let cleanedNumber = numberStr.replace(/[^0-9]/g, '');
-      //check limit of numberStr
-      if(numberStr.lenght < 13 && numberStr.lenght !== 0){
+      let [integerPart, decimalPart] = number.split(".");
 
-        if (cleanedNumber === '') {
-          return '0'; // Return '0' if the string is empty
-        }
-        // Format the numberStr with commas for thousands, millions, etc.
-        return cleanedNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-      }else{
-        cleanedNumber = numberStr.replace(/^./, '')
-        return cleanedNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+      //add to comman to the integer part 
+      integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+      //if decimal part return the formatted integer with decimal part
+      if(decimalPart!== undefined){
+        return `${integerPart}.${decimalPart}`
       }
+
+      // return just the formatted integer if there isnt decimal part 
+      return integerPart;
     };
 
 
@@ -65,8 +73,7 @@ export default class Calculator extends Component {
   render() {
     const { number, fontSizeClass } = this.state;
     const formattedNumber = this.formatNumber(number);
-
-    console.log()
+    
 
     return (
       <div className='container'>
@@ -95,7 +102,7 @@ export default class Calculator extends Component {
             <button id="two" onClick={() => this.handleClickNum(2)}>2</button>
             <button id="three" onClick={() => this.handleClickNum(3)}>3</button>
             <button id="add">+</button>
-            <button id="dot">.</button>
+            <button id="dot" onClick={() => this.handleClickNum('.')}>.</button>
             <button id="zero" onClick={() => this.handleClickNum(0)}>0</button>
             <button id="equals">=</button>
           </div>

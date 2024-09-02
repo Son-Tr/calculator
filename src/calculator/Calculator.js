@@ -29,12 +29,18 @@ export default class Calculator extends Component {
       number += num;
     }
 
+     // limmit the length of the number to 13 character in case the number is decimal point
+    if(number.includes(".") && number.length > 14){
+      number= number.slice(0,14);
+      alert("Limmit the length of number is 13 characters")
+    }
+
     // limmit the length of the number to 13 character
-    if (number.length > 13){
+    if ( !number.includes(".") && number.length > 13){
      number= number.slice(0,13);
      alert("Limmit the length of number is 13 characters")
     }
-
+   
     // Update the state with the formatted number,Call updateFontSize after setting state
     this.setState({ number }, this.updateFontSize);
   };

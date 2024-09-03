@@ -110,9 +110,9 @@ export default class Calculator extends Component {
 
   /* ------------------------- handle click btn equal ------------------------- */
   handleEqual = () => {
-    let { number, preNumber, operation, isCheck } = this.state;
+    let { number, preNumber, operation } = this.state;
     let result;
-    isCheck= true;
+    
     switch (operation) {
       case PLUS:
         result = Number(number) + preNumber;
@@ -151,19 +151,6 @@ export default class Calculator extends Component {
   /* ------------------------------ fotmat number ----------------------------- */
   formatNumber = (number) => {
 
-    // const MAX_LENGTH = 16; // Define the maximum length of the number
-    // const MIN_VALUE = 1e-15; // Minimum value threshold for scientific notation
-
-    // // Convert the number to a numeric type to check its magnitude
-    // let numericValue = Number(number);
-    // // Handle zero separately to avoid scientific notation for zero
-    // if (numericValue === 0) {
-    //   return '0';
-    // }
-    // // If the number is too large or too small, convert it to scientific notation
-    // if (numericValue >= Math.pow(10, MAX_LENGTH) || numericValue < MIN_VALUE) {
-    //   return numericValue.toExponential(6); // Convert to scientific notation with 6 decimal places
-    // }
 
     if( number.length>13){
       let result = Number(number).toPrecision(13) // covert with 12 digit percision

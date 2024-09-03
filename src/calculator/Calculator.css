@@ -2,6 +2,8 @@ body {
   box-sizing: border-box;
 }
 
+/* -------------------------------- container ------------------------------- */
+
 .container {
   display: grid;
   place-items: center;
@@ -10,7 +12,7 @@ body {
   margin: 0;
 }
 
-
+/* ----------------------------------- box ---------------------------------- */
 .box {
   border: 1px solid black;
   width: 400px;
@@ -74,6 +76,7 @@ body {
   margin: 0;
 }
 
+/* --------------------------------- button --------------------------------- */
 button {
   font-size: 2rem;
   padding-top: .8rem;
@@ -85,3 +88,10 @@ button {
   grid-column: 3/5;
 }
 
+
+/* ----------------------------- responsibility ----------------------------- */
+
+/* mobible */
+@media screen and (max-width: 480px) {
+    
+}

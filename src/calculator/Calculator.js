@@ -27,16 +27,19 @@ export default class Calculator extends Component {
 
     //if the calculation is complete, rest the number 
     if (isCheck) {
-     number = num
+      number = num
     } else {
       // Prevent adding multiple decimal points
       if (num === '.' && number.includes('.')) {
         return;
+      } else if (num === '.' && number === '0') {
+        number =  `0.${num}`;
       } else if (number === '0' && num !== '.') { // If number is '0', replace it with the new number clicked
         number = num;
       } else {
         number += num;
       }
+
     }
 
     // limmit the length of the number to 13 character in case the number is decimal point
@@ -52,7 +55,7 @@ export default class Calculator extends Component {
     }
 
     // Update the state with the formatted number,Call updateFontSize after setting state
-    this.setState({ number , isCheck:false }, this.updateFontSize);
+    this.setState({ number, isCheck: false }, this.updateFontSize);
   };
 
   /* ---------------------------- handle click back space  --------------------------- */
@@ -76,31 +79,11 @@ export default class Calculator extends Component {
   handleClickOperation = (opera) => {
     let { number, preNumber, operation } = this.state
     if (operation) {
-      switch (operation) {
-        case PLUS:
-          preNumber += Number(number);
-          break;
-        case SUBTRACT:
-          preNumber -= Number(number);
-          break;
-
-        case MULTIPLE:
-          preNumber *= Number(number);
-          break;
-
-        case DIVIDE:
-          if (number === "0") {
-            alert("Cannot divide by zero");
-            break;
-          }
-          preNumber /= Number(number);;
-          break;
-        default:
-          break;
-      }
-    } else {
-      preNumber = Number(number);
+      this.handleEqual() // complete the previous calculation
     }
+
+    console.log('Operation in handleClickOperation:', opera); // Debugging line
+    preNumber = Number(number);
     this.setState({
       preNumber,
       number: '0',
@@ -110,66 +93,85 @@ export default class Calculator extends Component {
 
   /* ------------------------- handle click btn equal ------------------------- */
   handleEqual = () => {
-    let { number, preNumber, operation } = this.state;
+    let { number, preNumber, operation,isCheck } = this.state;
     let result;
-    
+    console.log('PreNumber:', preNumber); // Debugging line
+
+    console.log('Operation:', operation); // Debugging line
+
+    console.log('Number:', number); // Debugging line
+    console.log('isCheck:', isCheck); // Debugging line
+
+    if(isCheck){
+      this.setState({
+        preNumber: 0,
+        number: '0',
+        operation: "",
+        isCheck: false,
+      }, this.updateFontSize)
+    }
     switch (operation) {
-      case PLUS:
-        result = Number(number) + preNumber;
+      case "+":
+        result = Number(preNumber) + Number(number);
         break;
-      case SUBTRACT:
-        result = Number(number) - preNumber;
-        break;
-
-      case MULTIPLE:
-        result = Number(number) * preNumber;
+      case "-":
+        result = Number(preNumber) - Number(number);
         break;
 
-      case DIVIDE:
+      case "*":
+        result = Number(preNumber) * Number(number);
+        break;
+
+      case "/":
         if (number === "0") {
           alert("Cannot divide by zero");
           break;
         }
-        result = Number(number) / preNumber;;
+        result = Number(preNumber) / Number(number);
         break;
       default:
         return;  // do not perform any update if there is not operation
     }
-
+    console.log('Result:', result); // Debugging line
     this.setState({
       preNumber: 0,
       number: result.toString(),
       operation: "",
       isCheck: true,
-    }, () => {
-      let formattedNumber = this.formatNumber(this.state.number);
-      this.setState({ number: formattedNumber }, this.updateFontSize)
-    });
+    }, this.updateFontSize)
+
 
   };
 
   /* ------------------------------ fotmat number ----------------------------- */
   formatNumber = (number) => {
 
+    let formatNumber = Number(number).toLocaleString('en-US', {
+      maximumFractionDigits: 12, // limit the number of decimal places
+    });
 
-    if( number.length>13){
-      let result = Number(number).toPrecision(13) // covert with 12 digit percision
-      return number= result.toString()
-    }
+    return formatNumber.toString()
 
-    // If the number is not too large, proceed with formatting
-    let [integerPart, decimalPart] = number.split(".");
 
-    //add to comma to the integer part 
-    integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
-    //if decimal part return the formatted integer with decimal part
-    if (decimalPart !== undefined) {
-      return `${integerPart}.${decimalPart}`
-    }
+    //   if( number.length>13){
+    //     let result = Number(number).toPrecision(13) // covert with 12 digit percision
+    //     return number= result.toString()
+    //   }
 
-    // return just the formatted integer if there isnt decimal part 
-    return integerPart;
+    //   // If the number is not too large, proceed with formatting
+    //   let [integerPart, decimalPart] = number.split(".");
+
+    //   //add to comma to the integer part 
+    //   integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+
+    //   //if decimal part return the formatted integer with decimal part
+    //   if (decimalPart !== undefined) {
+    //     return `${integerPart}.${decimalPart}`
+    //   }
+
+    //   // return just the formatted integer if there isnt decimal part 
+    //   return integerPart;
   };
 
   /* ------------- fix the font-size base on the length of number ------------- */
@@ -211,7 +213,7 @@ export default class Calculator extends Component {
               fontSizeClass: 'normal-font',
             })}>AC</button>
             <button id="percent">%</button>
-            <button id="divide" onClick={() => { this.handleClickOperation(DIVIDE) }}>
+            <button id="divide" onClick={() => { this.handleClickOperation("/") }}>
               {DIVIDE}
             </button>
             <button id="back-space" onClick={this.handleBackSpace}>
@@ -220,19 +222,19 @@ export default class Calculator extends Component {
             <button id="seven" onClick={() => this.handleClickNum(7)}>7</button>
             <button id="eight" onClick={() => this.handleClickNum(8)}>8</button>
             <button id="nine" onClick={() => this.handleClickNum(9)}>9</button>
-            <button id="multiply" onClick={() => { this.handleClickOperation(MULTIPLE) }}>
+            <button id="multiply" onClick={() => { this.handleClickOperation("*") }}>
               {MULTIPLE}
             </button>
             <button id="four" onClick={() => this.handleClickNum(4)}>4</button>
             <button id="five" onClick={() => this.handleClickNum(5)}>5</button>
             <button id="six" onClick={() => this.handleClickNum(6)}>6</button>
-            <button id="subtract" onClick={() => { this.handleClickOperation(SUBTRACT) }}>
+            <button id="subtract" onClick={() => { this.handleClickOperation("-") }}>
               {SUBTRACT}
             </button>
             <button id="one" onClick={() => this.handleClickNum(1)}>1</button>
             <button id="two" onClick={() => this.handleClickNum(2)}>2</button>
             <button id="three" onClick={() => this.handleClickNum(3)}>3</button>
-            <button id="add" onClick={() => { this.handleClickOperation(PLUS) }}>
+            <button id="add" onClick={() => { this.handleClickOperation("+") }}>
               {PLUS}
             </button>
             <button id="dot" onClick={() => this.handleClickNum('.')}>.</button>
@@ -240,6 +242,7 @@ export default class Calculator extends Component {
             <button id="equals" onClick={this.handleEqual} >=</button>
           </div>
         </div>
+        <footer>by <a href="https://github.com/Son-Tr" target='_blank'>Son-Tr</a></footer>
       </div>
     );
   }

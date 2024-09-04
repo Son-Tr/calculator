@@ -12,184 +12,228 @@ export default class Calculator extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      resultCalculation: '0', // Initialize as string for easier manipulation
       preNumber: 0,
-      number: '0', // Initialize as string for easier manipulation
+      nextNumber: 0,
       operation: '',
       fontSizeClass: 'normal-font', // Add state for font size class
-      isCheck: false,
+      isChecklEqual: false,
+      isCheckNextNumber: false,
     };
   }
 
   /* --------------------------- handle click number -------------------------- */
   handleClickNum = (num) => {
-    let { number, isCheck } = this.state;
+    let { resultCalculation, isChecklEqual } = this.state;
     num = num.toString();
 
+    //check isCheckNextNumber to know when the user enters a value after chooscing the operation
+    if (this.state.isCheckNextNumber) {
+      this.setState({ isCheckNextNumber: false })
+    }
+
     //if the calculation is complete, rest the number 
-    if (isCheck) {
-      number = num
+    if (isChecklEqual) {
+      resultCalculation = num
+      this.setState({
+        preNumber: 0,
+        nextNumber: 0,
+        operation: '',
+        fontSizeClass: 'normal-font',
+        isChecklEqual: false,
+        isCheckNextNumber: false,
+      })
     } else {
       // Prevent adding multiple decimal points
-      if (num === '.' && number.includes('.')) {
+      if (num === '.' && resultCalculation.includes('.')) {
         return;
-      } else if (num === '.' && number === '0') {
-        number =  `0.${num}`;
-      } else if (number === '0' && num !== '.') { // If number is '0', replace it with the new number clicked
-        number = num;
+      } else if (num === '.' && resultCalculation === '0') {
+        resultCalculation = `0${num}`;
+      } else if (resultCalculation === '0' && num !== '.') { // If resultCalculation is '0', replace it with the new number clicked
+        resultCalculation = num;
       } else {
-        number += num;
+        resultCalculation += num;
       }
-
     }
 
     // limmit the length of the number to 13 character in case the number is decimal point
-    if (number.includes(".") && number.length > 14) {
-      number = number.slice(0, 14);
-      alert("Limmit the length of number is 13 characters")
+    if (resultCalculation.includes(".") && resultCalculation.length > 14) {
+      resultCalculation = resultCalculation.slice(0, 14);
+      alert("Limmit the length of resultCalculation is 13 characters")
     }
 
     // limmit the length of the number to 13 character
-    if (!number.includes(".") && number.length > 13) {
-      number = number.slice(0, 13);
-      alert("Limmit the length of number is 13 characters")
+    if (!resultCalculation.includes(".") && resultCalculation.length > 13) {
+      resultCalculation = resultCalculation.slice(0, 13);
+      alert("Limmit the length of resultCalculation is 13 characters")
     }
 
     // Update the state with the formatted number,Call updateFontSize after setting state
-    this.setState({ number, isCheck: false }, this.updateFontSize);
+
+    this.setState({ resultCalculation }, this.updateFontSize);
   };
 
-  /* ---------------------------- handle click back space  --------------------------- */
-  handleBackSpace = () => {
-    let { number } = this.state;
-    if (number.length < 1) {
-      number = "0"
-    } else {
-      number = number.slice(0, -1)
-    }
 
-    // if the result is an emtry string . reset to "0"
-    if (number === '') {
-      number = '0';
-    }
-
-    this.setState({ number }, this.updateFontSize)
-  }
 
   /* ----------------------- handle click btn operation ----------------------- */
   handleClickOperation = (opera) => {
-    let { number, preNumber, operation } = this.state
-    if (operation) {
-      this.handleEqual() // complete the previous calculation
+    let { resultCalculation, preNumber, nextNumber, operation } = this.state
+
+    if (operation && preNumber) {
+      // this condition stops the calculation from happpening too soon. when user enters a value, the calculation will take place;
+      if (this.state.isCheckNextNumber) {
+        this.setState({ operation: opera });
+        return;
+      } else {
+        // check the case : opertion and preNumber already have value 
+        nextNumber = Number(resultCalculation)
+        switch (operation) {
+          case "+":
+            preNumber = Number(preNumber) + Number(nextNumber);
+            break;
+          case "-":
+            preNumber = Number(preNumber) - Number(nextNumber);
+            break;
+          case "*":
+            preNumber = Number(preNumber) * Number(nextNumber);
+            break;
+
+          case "/":
+            if (nextNumber === "0") {
+              alert("Cannot divide by zero");
+              return;
+            }
+            preNumber = Number(preNumber) / Number(nextNumber);
+            break;
+          default:
+            return;  // do not perform any update if there is not operation
+        }
+      }
+    } else {
+      preNumber = Number(resultCalculation);
     }
 
-    console.log('Operation in handleClickOperation:', opera); // Debugging line
-    preNumber = Number(number);
     this.setState({
       preNumber,
-      number: '0',
+      nextNumber,
+      resultCalculation: '0',
       operation: opera,
+      isCheckNextNumber: true,
     })
   }
 
   /* ------------------------- handle click btn equal ------------------------- */
   handleEqual = () => {
-    let { number, preNumber, operation,isCheck } = this.state;
+    let { resultCalculation, preNumber, nextNumber, operation, isChecklEqual } = this.state;
     let result;
-    console.log('PreNumber:', preNumber); // Debugging line
 
-    console.log('Operation:', operation); // Debugging line
-
-    console.log('Number:', number); // Debugging line
-    console.log('isCheck:', isCheck); // Debugging line
-
-    if(isCheck){
-      this.setState({
-        preNumber: 0,
-        number: '0',
-        operation: "",
-        isCheck: false,
-      }, this.updateFontSize)
+    if (isChecklEqual) {
+      preNumber = Number(resultCalculation);
+      result = this.calculate(preNumber, operation, nextNumber)
+    } else {
+      nextNumber = Number(resultCalculation)
+      result = this.calculate(preNumber, operation, nextNumber)
     }
+
+    this.setState({
+      preNumber,
+      nextNumber,
+      resultCalculation: result.toString(),
+      isChecklEqual: true,
+    }, this.updateFontSize)
+
+    console.log("resultCalculation", resultCalculation)
+    console.log("preNumber", preNumber)
+    console.log("nextNumber", nextNumber)
+    console.log("operation", operation)
+    console.log("isChecklEqual", isChecklEqual)
+
+  };
+
+  calculate = (preNumber, operation, nextNumber) => {
+    let result;
     switch (operation) {
       case "+":
-        result = Number(preNumber) + Number(number);
+        result = Number(preNumber) + Number(nextNumber);
         break;
       case "-":
-        result = Number(preNumber) - Number(number);
+        result = Number(preNumber) - Number(nextNumber);
         break;
 
       case "*":
-        result = Number(preNumber) * Number(number);
+        result = Number(preNumber) * Number(nextNumber);
         break;
 
       case "/":
-        if (number === "0") {
+        if (nextNumber === 0) {
           alert("Cannot divide by zero");
           break;
         }
-        result = Number(preNumber) / Number(number);
+        result = Number(preNumber) / Number(nextNumber);
         break;
       default:
-        return;  // do not perform any update if there is not operation
+        return;  //do not perform any update if there is not operation
     }
-    console.log('Result:', result); // Debugging line
-    this.setState({
-      preNumber: 0,
-      number: result.toString(),
-      operation: "",
-      isCheck: true,
-    }, this.updateFontSize)
-
-
-  };
-
-  /* ------------------------------ fotmat number ----------------------------- */
-  formatNumber = (number) => {
-
-    let formatNumber = Number(number).toLocaleString('en-US', {
-      maximumFractionDigits: 12, // limit the number of decimal places
-    });
-
-    return formatNumber.toString()
+    return result
+  }
 
 
 
-    //   if( number.length>13){
-    //     let result = Number(number).toPrecision(13) // covert with 12 digit percision
-    //     return number= result.toString()
-    //   }
+  // /* ------------------------------ fotmat number ----------------------------- */
+  // formatNumber = (number) => {
 
-    //   // If the number is not too large, proceed with formatting
-    //   let [integerPart, decimalPart] = number.split(".");
+  //   let formatNumber = Number(number).toLocaleString('en-US', {
+  //     maximumFractionDigits: 12, // limit the number of decimal places
+  //   });
 
-    //   //add to comma to the integer part 
-    //   integerPart = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-
-    //   //if decimal part return the formatted integer with decimal part
-    //   if (decimalPart !== undefined) {
-    //     return `${integerPart}.${decimalPart}`
-    //   }
-
-    //   // return just the formatted integer if there isnt decimal part 
-    //   return integerPart;
-  };
+  //   return formatNumber.toString()
+  // };
 
   /* ------------- fix the font-size base on the length of number ------------- */
   updateFontSize = () => {
-    const { number } = this.state;
+    const { resultCalculation } = this.state;
     let fontSizeClass = 'normal-font';
 
-    if (number.length > 7) {
+    if (resultCalculation.length > 7) {
       fontSizeClass = 'small-font'; // Apply small font size if length > 7
     }
 
     this.setState({ fontSizeClass });
   };
 
+  /* ----------------------------- handle click AC ---------------------------- */
+  handleClickAc = () => {
+    this.setState({
+      resultCalculation: '0',
+      preNumber: 0,
+      nextNumber: 0,
+      operation: '',
+      fontSizeClass: 'normal-font',
+      isChecklEqual: false,
+      isCheckNextNumber: false,
+    })
+  }
+
+  /* ---------------------------- handle click back space  --------------------------- */
+  handleBackSpace = () => {
+    let { resultCalculation } = this.state;
+    if (resultCalculation.length < 1) {
+      resultCalculation = "0"
+    } else {
+      resultCalculation = resultCalculation.slice(0, -1)
+    }
+
+    // if the result is an emtry string . reset to "0"
+    if (resultCalculation === '') {
+      resultCalculation = '0';
+    }
+    this.setState({ resultCalculation }, this.updateFontSize)
+  }
+
 
   render() {
-    const { number, fontSizeClass, preNumber, operation } = this.state;
-    let formattedNumber = this.formatNumber(number)
+    const { resultCalculation, fontSizeClass, preNumber, operation, nextNumber, isChecklEqual } = this.state;
+    // let formattedNumber = this.formatNumber(number)
     return (
       <div className='container'>
         <h1 className='title'>Calculator</h1>
@@ -200,18 +244,14 @@ export default class Calculator extends Component {
               <span className='operation'>
                 {operation}
               </span>
+              {isChecklEqual ? `${nextNumber} =` : ""}
             </p>
             <p className={`output no-spinner ${fontSizeClass}`} id='display'>
-              {formattedNumber}
+              {resultCalculation}
             </p>
           </div>
           <div className="grid-btn">
-            <button id="clear" onClick={() => this.setState({
-              preNumber: 0,
-              number: '0',
-              operation: '',
-              fontSizeClass: 'normal-font',
-            })}>AC</button>
+            <button id="clear" onClick={this.handleClickAc}>AC</button>
             <button id="percent">%</button>
             <button id="divide" onClick={() => { this.handleClickOperation("/") }}>
               {DIVIDE}

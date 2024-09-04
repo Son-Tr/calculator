@@ -17,14 +17,14 @@ export default class Calculator extends Component {
       nextNumber: 0,
       operation: '',
       fontSizeClass: 'normal-font', // Add state for font size class
-      isChecklEqual: false,
+      isCheckEqual: false,
       isCheckNextNumber: false,
     };
   }
 
   /* --------------------------- handle click number -------------------------- */
   handleClickNum = (num) => {
-    let { resultCalculation, isChecklEqual } = this.state;
+    let { resultCalculation, isCheckEqual } = this.state;
     num = num.toString();
 
     //check isCheckNextNumber to know when the user enters a value after chooscing the operation
@@ -33,14 +33,14 @@ export default class Calculator extends Component {
     }
 
     //if the calculation is complete, rest the number 
-    if (isChecklEqual) {
+    if (isCheckEqual) {
       resultCalculation = num
       this.setState({
         preNumber: 0,
         nextNumber: 0,
         operation: '',
         fontSizeClass: 'normal-font',
-        isChecklEqual: false,
+        isCheckEqual: false,
         isCheckNextNumber: false,
       })
     } else {
@@ -84,6 +84,14 @@ export default class Calculator extends Component {
       if (this.state.isCheckNextNumber) {
         this.setState({ operation: opera });
         return;
+      } else if (this.state.isCheckEqual) {
+        this.setState({
+          preNumber: Number(resultCalculation),
+          operation: opera,
+          isCheckEqual: false,
+          isCheckNextNumber: true
+        })
+
       } else {
         // check the case : opertion and preNumber already have value 
         nextNumber = Number(resultCalculation)
@@ -124,10 +132,10 @@ export default class Calculator extends Component {
 
   /* ------------------------- handle click btn equal ------------------------- */
   handleEqual = () => {
-    let { resultCalculation, preNumber, nextNumber, operation, isChecklEqual } = this.state;
+    let { resultCalculation, preNumber, nextNumber, operation, isCheckEqual } = this.state;
     let result;
 
-    if (isChecklEqual) {
+    if (isCheckEqual) {
       preNumber = Number(resultCalculation);
       result = this.calculate(preNumber, operation, nextNumber)
     } else {
@@ -139,14 +147,14 @@ export default class Calculator extends Component {
       preNumber,
       nextNumber,
       resultCalculation: result.toString(),
-      isChecklEqual: true,
+      isCheckEqual: true,
     }, this.updateFontSize)
 
     console.log("resultCalculation", resultCalculation)
     console.log("preNumber", preNumber)
     console.log("nextNumber", nextNumber)
     console.log("operation", operation)
-    console.log("isChecklEqual", isChecklEqual)
+    console.log("isCheckEqual", isCheckEqual)
 
   };
 
@@ -209,7 +217,7 @@ export default class Calculator extends Component {
       nextNumber: 0,
       operation: '',
       fontSizeClass: 'normal-font',
-      isChecklEqual: false,
+      isCheckEqual: false,
       isCheckNextNumber: false,
     })
   }
@@ -232,7 +240,7 @@ export default class Calculator extends Component {
 
 
   render() {
-    const { resultCalculation, fontSizeClass, preNumber, operation, nextNumber, isChecklEqual } = this.state;
+    const { resultCalculation, fontSizeClass, preNumber, operation, nextNumber, isCheckEqual } = this.state;
     // let formattedNumber = this.formatNumber(number)
     return (
       <div className='container'>
@@ -244,7 +252,7 @@ export default class Calculator extends Component {
               <span className='operation'>
                 {operation}
               </span>
-              {isChecklEqual ? `${nextNumber} =` : ""}
+              {isCheckEqual ? `${nextNumber} =` : ""}
             </p>
             <p className={`output no-spinner ${fontSizeClass}`} id='display'>
               {resultCalculation}

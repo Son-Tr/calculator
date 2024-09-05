@@ -47,30 +47,35 @@ export default class Calculator extends Component {
       // Prevent adding multiple decimal points
       if (num === '.' && resultCalculation.includes('.')) {
         return;
-      } else if (num === '.' && resultCalculation === '0') {
-        resultCalculation = `0${num}`;
+      } else if (num === '.' ) {
+        if( resultCalculation === '0'){
+          resultCalculation = `0${num}`;
+        }else{
+          resultCalculation += num;
+        }
+
       } else if (resultCalculation === '0' && num !== '.') { // If resultCalculation is '0', replace it with the new number clicked
         resultCalculation = num;
       } else {
         resultCalculation += num;
       }
     }
-
+    
     // limmit the length of the number to 13 character in case the number is decimal point
     if (resultCalculation.includes(".") && resultCalculation.length > 14) {
       resultCalculation = resultCalculation.slice(0, 14);
-      alert("Limmit the length of resultCalculation is 13 characters")
+      // alert("Limmit the length of resultCalculation is 13 characters")
     }
 
     // limmit the length of the number to 13 character
     if (!resultCalculation.includes(".") && resultCalculation.length > 13) {
       resultCalculation = resultCalculation.slice(0, 13);
-      alert("Limmit the length of resultCalculation is 13 characters")
+      // alert("Limmit the length of resultCalculation is 13 characters")
     }
 
     // Update the state with the formatted number,Call updateFontSize after setting state
-
-    this.setState({ resultCalculation }, this.updateFontSize);
+    
+    this.setState({ resultCalculation}, this.updateFontSize);
   };
 
 
@@ -87,10 +92,13 @@ export default class Calculator extends Component {
       } else if (this.state.isCheckEqual) {
         this.setState({
           preNumber: Number(resultCalculation),
+          nextNumber: 0,
           operation: opera,
+          resultCalculation:"0",
           isCheckEqual: false,
           isCheckNextNumber: true
-        })
+        });
+        return;
 
       } else {
         // check the case : opertion and preNumber already have value 
@@ -107,7 +115,7 @@ export default class Calculator extends Component {
             break;
 
           case "/":
-            if (nextNumber === "0") {
+            if (nextNumber === 0) {
               alert("Cannot divide by zero");
               return;
             }
@@ -132,7 +140,12 @@ export default class Calculator extends Component {
 
   /* ------------------------- handle click btn equal ------------------------- */
   handleEqual = () => {
-    let { resultCalculation, preNumber, nextNumber, operation, isCheckEqual } = this.state;
+    let { resultCalculation, preNumber, nextNumber, operation, isCheckEqual, isCheckNextNumber } = this.state;
+
+    // Check if operation and preNumber are valid before calculating
+    if (!operation || preNumber === 0) {
+      return; // Exit if there's no valid operation or preNumber
+    }
     let result;
 
     if (isCheckEqual) {
@@ -146,7 +159,7 @@ export default class Calculator extends Component {
     this.setState({
       preNumber,
       nextNumber,
-      resultCalculation: result.toString(),
+      resultCalculation: this.formatNumber(result),
       isCheckEqual: true,
     }, this.updateFontSize)
 
@@ -155,6 +168,8 @@ export default class Calculator extends Component {
     console.log("nextNumber", nextNumber)
     console.log("operation", operation)
     console.log("isCheckEqual", isCheckEqual)
+    console.log("isCheckNextNumber", isCheckNextNumber)
+
 
   };
 
@@ -187,15 +202,16 @@ export default class Calculator extends Component {
 
 
 
-  // /* ------------------------------ fotmat number ----------------------------- */
-  // formatNumber = (number) => {
+  /* ------------------------------ fotmat number ----------------------------- */
+  formatNumber = (number) => {
 
-  //   let formatNumber = Number(number).toLocaleString('en-US', {
-  //     maximumFractionDigits: 12, // limit the number of decimal places
-  //   });
+    let formatNumber = Number(number).toLocaleString('en-US', {
+      maximumFractionDigits: 12, // limit the number of decimal places
+      minimumFractionDigits: 0,
+    });
 
-  //   return formatNumber.toString()
-  // };
+    return formatNumber
+  };
 
   /* ------------- fix the font-size base on the length of number ------------- */
   updateFontSize = () => {

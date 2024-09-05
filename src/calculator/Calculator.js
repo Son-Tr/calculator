@@ -24,7 +24,7 @@ export default class Calculator extends Component {
 
   /* --------------------------- handle click number -------------------------- */
   handleClickNum = (num) => {
-    let { resultCalculation, isCheckEqual } = this.state;
+    let { resultCalculation, preNumber, nextNumber, operation, isCheckEqual, isCheckNextNumber } = this.state;
     num = num.toString();
 
     //check isCheckNextNumber to know when the user enters a value after chooscing the operation
@@ -47,20 +47,25 @@ export default class Calculator extends Component {
       // Prevent adding multiple decimal points
       if (num === '.' && resultCalculation.includes('.')) {
         return;
-      } else if (num === '.' ) {
-        if( resultCalculation === '0'){
+      } else if (num === '.') {
+        if (resultCalculation === '0') {
           resultCalculation = `0${num}`;
-        }else{
+        } else {
           resultCalculation += num;
         }
 
       } else if (resultCalculation === '0' && num !== '.') { // If resultCalculation is '0', replace it with the new number clicked
-        resultCalculation = num;
+        if (Number(num) === 0 && resultCalculation.includes(".")) {
+          resultCalculation += "0"
+        } else {
+          resultCalculation = num;
+        }
+
       } else {
         resultCalculation += num;
       }
     }
-    
+
     // limmit the length of the number to 13 character in case the number is decimal point
     if (resultCalculation.includes(".") && resultCalculation.length > 14) {
       resultCalculation = resultCalculation.slice(0, 14);
@@ -74,8 +79,13 @@ export default class Calculator extends Component {
     }
 
     // Update the state with the formatted number,Call updateFontSize after setting state
-    
-    this.setState({ resultCalculation}, this.updateFontSize);
+
+    this.setState({ resultCalculation }, this.updateFontSize, console.log("resultCalculation", resultCalculation),
+      console.log("preNumber", preNumber),
+      console.log("nextNumber", nextNumber),
+      console.log("operation", operation),
+      console.log("isCheckEqual", isCheckEqual),
+      console.log("isCheckNextNumber", isCheckNextNumber));
   };
 
 
@@ -94,12 +104,11 @@ export default class Calculator extends Component {
           preNumber: Number(resultCalculation),
           nextNumber: 0,
           operation: opera,
-          resultCalculation:"0",
+          resultCalculation: "0",
           isCheckEqual: false,
           isCheckNextNumber: true
         });
         return;
-
       } else {
         // check the case : opertion and preNumber already have value 
         nextNumber = Number(resultCalculation)
@@ -147,7 +156,6 @@ export default class Calculator extends Component {
       return; // Exit if there's no valid operation or preNumber
     }
     let result;
-
     if (isCheckEqual) {
       preNumber = Number(resultCalculation);
       result = this.calculate(preNumber, operation, nextNumber)
@@ -159,16 +167,11 @@ export default class Calculator extends Component {
     this.setState({
       preNumber,
       nextNumber,
-      resultCalculation: this.formatNumber(result),
+      resultCalculation: result.toString(),
       isCheckEqual: true,
-    }, this.updateFontSize)
+    },)
 
-    console.log("resultCalculation", resultCalculation)
-    console.log("preNumber", preNumber)
-    console.log("nextNumber", nextNumber)
-    console.log("operation", operation)
-    console.log("isCheckEqual", isCheckEqual)
-    console.log("isCheckNextNumber", isCheckNextNumber)
+
 
 
   };
@@ -201,16 +204,31 @@ export default class Calculator extends Component {
   }
 
 
-
   /* ------------------------------ fotmat number ----------------------------- */
   formatNumber = (number) => {
+    let numberStr = number.toString()
+    let result;
+    if (numberStr.includes(".")) {
+      let [integerPart, decimalPart] = numberStr.split(".") // divide the number befor and after "."
 
-    let formatNumber = Number(number).toLocaleString('en-US', {
-      maximumFractionDigits: 12, // limit the number of decimal places
-      minimumFractionDigits: 0,
-    });
+      if (decimalPart.length === 0) {
+        result= Number(integerPart).toLocaleString('en-US') + "."
 
-    return formatNumber
+      } else if (decimalPart.length > 0) {
+        result= Number(integerPart).toLocaleString('en-US') + "." + decimalPart
+
+      } else if(integerPart.length + decimalPart.length > 13){
+        result=  Number(number).toExponential(12);
+      }else {
+        result= Number(number).toLocaleString('en-US');
+      }
+    } else {
+      result= Number(number).toLocaleString('en-US', {
+        maximumFractionDigits: 12, // limit the number of decimal places
+      });
+    }
+
+    return result
   };
 
   /* ------------- fix the font-size base on the length of number ------------- */
@@ -257,21 +275,21 @@ export default class Calculator extends Component {
 
   render() {
     const { resultCalculation, fontSizeClass, preNumber, operation, nextNumber, isCheckEqual } = this.state;
-    // let formattedNumber = this.formatNumber(number)
+    // this.formatNumber(resultCalculation)
     return (
       <div className='container'>
         <h1 className='title'>Calculator</h1>
         <div className="box">
           <div className="input-results">
             <p className='formula'>
-              {preNumber}
+              {this.formatNumber(preNumber)}
               <span className='operation'>
                 {operation}
               </span>
-              {isCheckEqual ? `${nextNumber} =` : ""}
+              {isCheckEqual ? `${this.formatNumber(nextNumber)} =` : ""}
             </p>
             <p className={`output no-spinner ${fontSizeClass}`} id='display'>
-              {resultCalculation}
+              {this.formatNumber(resultCalculation)}
             </p>
           </div>
           <div className="grid-btn">

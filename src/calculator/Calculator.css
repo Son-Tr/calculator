@@ -14,10 +14,10 @@ body {
 }
 
 .title {
-  font-size: 4rem;
+  font-size: 3.5rem;
   font-weight: 400;
   font-style:normal ;
-  margin: auto;
+  margin: 0 0 1rem;
   color: linear-gradient(90deg, #dda1f2, #8de2df);
 }
 
@@ -30,7 +30,7 @@ body {
   border-radius: 5px;
   overflow: hidden;
   box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-  
+
 }
 input-results{
   height: 110px;
@@ -64,7 +64,6 @@ input-results{
 
 .normal-font {
   font-size: 3rem;
-
 }
 
 .output:focus-visible {
@@ -88,7 +87,6 @@ input-results{
 .no-spinner::-webkit-outer-spin-button,
 .no-spinner::-webkit-inner-spin-button {
   -webkit-appearance: none;
-  /* Ẩn các nút trên Chrome, Safari, Edge */
   margin: 0;
 }
 
@@ -101,6 +99,13 @@ button {
   border-radius: 50%;
   cursor: pointer;
   border: none;
+  transition: background-color linear 0.3s;
+}
+button:hover{
+  background-color:#ECD444
+}
+button:active{
+  scale: 0.98;
 }
 
 footer{

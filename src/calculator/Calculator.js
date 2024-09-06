@@ -89,68 +89,50 @@ export default class Calculator extends Component {
 
   /* ----------------------- handle click btn operation ----------------------- */
   handleClickOperation = (opera) => {
-    let { resultCalculation, preNumber, nextNumber, operation } = this.state;
+    let { resultCalculation, preNumber, operation, isCheckEqual } = this.state;
 
-
-    if (operation && preNumber) {
-      // this condition stops the calculation from happpening too soon. when user enters a value, the calculation will take place;
-      if (this.state.isCheckNextNumber) {
-        this.setState({ operation: opera });
-        return;
-      } else if (this.state.isCheckEqual) {
+    if (isCheckEqual) {
+        // Reset state after pressing `=` and then an operation
         this.setState({
-          preNumber: Number(resultCalculation),
-          nextNumber: 0,
-          operation: opera,
-          resultCalculation: "0",
-          isCheckEqual: false,
-          isCheckNextNumber: true
+            preNumber: Number(resultCalculation),
+            nextNumber: 0,
+            operation: opera,
+            isCheckEqual: false,
+            isCheckNextNumber: true,
         });
-        return;
-      } else {
-        // check the case : opertion and preNumber already have value 
-        nextNumber = Number(resultCalculation)
-        switch (operation) {
-          case "+":
-            preNumber = Number(preNumber) + Number(nextNumber);
-            break;
-          case "-":
-            preNumber = Number(preNumber) - Number(nextNumber);
-            break;
-          case "*":
-            preNumber = Number(preNumber) * Number(nextNumber);
-            break;
+    } else if (this.state.isCheckNextNumber) {
+        // Change operation if an operation button is pressed repeatedly
+        this.setState({ operation: opera });
+    } else if (operation && preNumber) {
+        // If an operation exists, calculate and update the state
+        let nextNumber = Number(resultCalculation);
+        preNumber = this.calculate(preNumber, operation, nextNumber);
 
-          case "/":
-            if (nextNumber === 0) {
-              alert("Cannot divide by zero");
-              return;
-            }
-            preNumber = Number(preNumber) / Number(nextNumber);
-            break;
-          default:
-            return;  // do not perform any update if there is not operation
-        }
-      }
+        this.setState({
+            preNumber,
+            nextNumber: 0,
+            resultCalculation: preNumber.toString(),
+            operation: opera,
+            isCheckNextNumber: true,
+        });
     } else {
-      preNumber = Number(resultCalculation);
+        // Initial operation selection
+        preNumber = Number(resultCalculation);
+        this.setState({
+            preNumber,
+            operation: opera,
+            isCheckNextNumber: true,
+        });
     }
+};
 
-    this.setState({
-      preNumber,
-      nextNumber,
-      resultCalculation: '0',
-      operation: opera,
-      isCheckNextNumber: true,
-    })
-  }
 
   /* ------------------------- handle click btn equal ------------------------- */
   handleEqual = () => {
     let { resultCalculation, preNumber, nextNumber, operation, isCheckEqual, fontSizeClass } = this.state;
 
     // Check if operation and preNumber are valid before calculating
-    if (!operation || preNumber === 0) {
+    if (!operation) {
       return; // Exit if there's no valid operation or preNumber
     }
     let result;
@@ -281,7 +263,7 @@ export default class Calculator extends Component {
 
   render() {
     const { resultCalculation, fontSizeClass, preNumber, operation, nextNumber, isCheckEqual } = this.state;
-   
+
     return (
       <div className='container'>
         <h1 className='title'>Calculator</h1>
@@ -300,13 +282,14 @@ export default class Calculator extends Component {
           </div>
           <div className="grid-btn">
             <button id="clear" onClick={this.handleClickAc}>AC</button>
+            <button id="back-space" onClick={this.handleBackSpace}>
+              <FontAwesomeIcon icon={faDeleteLeft} />
+            </button>
             <button id="percent">%</button>
             <button id="divide" onClick={() => { this.handleClickOperation("/") }}>
               {DIVIDE}
             </button>
-            <button id="back-space" onClick={this.handleBackSpace}>
-              <FontAwesomeIcon icon={faDeleteLeft} />
-            </button>
+
             <button id="seven" onClick={() => this.handleClickNum(7)}>7</button>
             <button id="eight" onClick={() => this.handleClickNum(8)}>8</button>
             <button id="nine" onClick={() => this.handleClickNum(9)}>9</button>
@@ -325,8 +308,10 @@ export default class Calculator extends Component {
             <button id="add" onClick={() => { this.handleClickOperation("+") }}>
               {PLUS}
             </button>
-            <button id="dot" onClick={() => this.handleClickNum('.')}>.</button>
+            <button id="negative"  >+/-</button>
+
             <button id="zero" onClick={() => this.handleClickNum(0)}>0</button>
+            <button id="dot" onClick={() => this.handleClickNum('.')}>.</button>
             <button id="equals" onClick={this.handleEqual} >=</button>
           </div>
         </div>

@@ -12,7 +12,7 @@ body {
   margin: 0;
 }
 
-.title{
+.title {
   font-size: 4rem;
   margin: auto;
 }
@@ -20,82 +20,82 @@ body {
 /* ----------------------------------- box ---------------------------------- */
 .box {
   border: 1px solid black;
-  width: 400px;
-  height: 450px;
   display: flex;
   justify-content: flex-end;
   flex-direction: column;
-  padding: 3px;
+  padding: 10px;
   border-radius: 5px;
 }
+input-results{
+  height: 110px;
+}
 
-.formula{
+.formula {
   font-size: 1.4rem;
   text-align: right;
   margin: auto 0 auto;
 }
 
-.operation{
+.operation {
   font-size: 1rem;
- margin: 0 0.25rem 0;
+  margin: 0 0.25rem 0;
 }
 
 .output {
   width: 99%;
   text-align: right;
-  border:none;
+  border: none;
   padding-right: 2px;
   margin: .5rem 0;
 }
 
-.small-font{
+.small-font {
   font-size: 2rem !important;
 }
 
-.normal-font{
-  font-size: 4rem;
+.normal-font {
+  font-size: 3rem;
 
 }
 
-
-
-.output:focus-visible{
+.output:focus-visible {
   outline: none;
 }
 
 .no-spinner {
-  -moz-appearance: textfield; 
+  -moz-appearance: textfield;
 }
+
+/* ------------------------------- list button ------------------------------ */
 
 .grid-btn {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 3px;
+  gap: 5px;
+  margin: 0 5px;
 }
 
 
 .no-spinner::-webkit-outer-spin-button,
 .no-spinner::-webkit-inner-spin-button {
-  -webkit-appearance: none; /* Ẩn các nút trên Chrome, Safari, Edge */
+  -webkit-appearance: none;
+  /* Ẩn các nút trên Chrome, Safari, Edge */
   margin: 0;
 }
 
 /* --------------------------------- button --------------------------------- */
 button {
-  font-size: 2rem;
-  padding-top: .8rem;
-  border-radius: 5px;
+  height: 70px;
+  width: 70px;
+  font-size: 26px;
+  line-height: 26px;
+  border-radius: 50%;
   cursor: pointer;
 }
 
-#equals {
-  grid-column: 3/5;
-}
 
 
 /* ----------------------------- responsibility ----------------------------- */
 
 /* mobible */
-@media screen and (max-width: 480px) {
-    
-}
+@media screen and (max-width: 480px) {}

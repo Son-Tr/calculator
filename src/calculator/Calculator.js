@@ -24,12 +24,14 @@ export default class Calculator extends Component {
 
   /* --------------------------- handle click number -------------------------- */
   handleClickNum = (num) => {
-    let { resultCalculation, preNumber, nextNumber, operation, isCheckEqual, isCheckNextNumber } = this.state;
+    let { resultCalculation, isCheckEqual, fontSizeClass } = this.state;
     num = num.toString();
 
     //check isCheckNextNumber to know when the user enters a value after chooscing the operation
     if (this.state.isCheckNextNumber) {
-      this.setState({ isCheckNextNumber: false })
+      resultCalculation = num
+      this.setState({ resultCalculation, isCheckNextNumber: false })
+      return
     }
 
     //if the calculation is complete, rest the number 
@@ -79,20 +81,16 @@ export default class Calculator extends Component {
     }
 
     // Update the state with the formatted number,Call updateFontSize after setting state
-
-    this.setState({ resultCalculation }, this.updateFontSize, console.log("resultCalculation", resultCalculation),
-      console.log("preNumber", preNumber),
-      console.log("nextNumber", nextNumber),
-      console.log("operation", operation),
-      console.log("isCheckEqual", isCheckEqual),
-      console.log("isCheckNextNumber", isCheckNextNumber));
+    fontSizeClass = this.updateFontSize(resultCalculation)
+    this.setState({ resultCalculation, fontSizeClass });
   };
 
 
 
   /* ----------------------- handle click btn operation ----------------------- */
   handleClickOperation = (opera) => {
-    let { resultCalculation, preNumber, nextNumber, operation } = this.state
+    let { resultCalculation, preNumber, nextNumber, operation } = this.state;
+
 
     if (operation && preNumber) {
       // this condition stops the calculation from happpening too soon. when user enters a value, the calculation will take place;
@@ -149,7 +147,7 @@ export default class Calculator extends Component {
 
   /* ------------------------- handle click btn equal ------------------------- */
   handleEqual = () => {
-    let { resultCalculation, preNumber, nextNumber, operation, isCheckEqual, isCheckNextNumber } = this.state;
+    let { resultCalculation, preNumber, nextNumber, operation, isCheckEqual, fontSizeClass } = this.state;
 
     // Check if operation and preNumber are valid before calculating
     if (!operation || preNumber === 0) {
@@ -164,16 +162,15 @@ export default class Calculator extends Component {
       result = this.calculate(preNumber, operation, nextNumber)
     }
 
+    fontSizeClass = this.updateFontSize(result.toString())
+
     this.setState({
       preNumber,
       nextNumber,
       resultCalculation: result.toString(),
+      fontSizeClass,
       isCheckEqual: true,
-    },)
-
-
-
-
+    })
   };
 
   calculate = (preNumber, operation, nextNumber) => {
@@ -212,18 +209,18 @@ export default class Calculator extends Component {
       let [integerPart, decimalPart] = numberStr.split(".") // divide the number befor and after "."
 
       if (decimalPart.length === 0) {
-        result= Number(integerPart).toLocaleString('en-US') + "."
+        result = Number(integerPart).toLocaleString('en-US') + "."
 
       } else if (decimalPart.length > 0) {
-        result= Number(integerPart).toLocaleString('en-US') + "." + decimalPart
+        result = Number(integerPart).toLocaleString('en-US') + "." + decimalPart
 
-      } else if(integerPart.length + decimalPart.length > 13){
-        result=  Number(number).toExponential(12);
-      }else {
-        result= Number(number).toLocaleString('en-US');
+      } else if (integerPart.length + decimalPart.length > 13) {
+        result = Number(number).toExponential(12);
+      } else {
+        result = Number(number).toLocaleString('en-US');
       }
     } else {
-      result= Number(number).toLocaleString('en-US', {
+      result = Number(number).toLocaleString('en-US', {
         maximumFractionDigits: 12, // limit the number of decimal places
       });
     }
@@ -232,15 +229,9 @@ export default class Calculator extends Component {
   };
 
   /* ------------- fix the font-size base on the length of number ------------- */
-  updateFontSize = () => {
-    const { resultCalculation } = this.state;
-    let fontSizeClass = 'normal-font';
-
-    if (resultCalculation.length > 7) {
-      fontSizeClass = 'small-font'; // Apply small font size if length > 7
-    }
-
-    this.setState({ fontSizeClass });
+  updateFontSize = (result) => {
+    let fontSizeClass = result.length > 7 ? 'small-font' : 'normal-font';
+    return fontSizeClass;
   };
 
   /* ----------------------------- handle click AC ---------------------------- */
@@ -258,7 +249,19 @@ export default class Calculator extends Component {
 
   /* ---------------------------- handle click back space  --------------------------- */
   handleBackSpace = () => {
-    let { resultCalculation } = this.state;
+    let { resultCalculation, fontSizeClass, isCheckEqual } = this.state;
+    if (isCheckEqual) { // after calculation reset state.
+      this.setState({
+        resultCalculation: "0",
+        preNumber: 0,
+        nextNumber: 0,
+        operation: '',
+        fontSizeClass: 'normal-font',
+        isCheckEqual: false,
+        isCheckNextNumber: false,
+      });
+      return;
+    }
     if (resultCalculation.length < 1) {
       resultCalculation = "0"
     } else {
@@ -269,13 +272,16 @@ export default class Calculator extends Component {
     if (resultCalculation === '') {
       resultCalculation = '0';
     }
-    this.setState({ resultCalculation }, this.updateFontSize)
+    //update font size
+    fontSizeClass = this.updateFontSize(resultCalculation)
+
+    this.setState({ resultCalculation, fontSizeClass })
   }
 
 
   render() {
     const { resultCalculation, fontSizeClass, preNumber, operation, nextNumber, isCheckEqual } = this.state;
-    // this.formatNumber(resultCalculation)
+   
     return (
       <div className='container'>
         <h1 className='title'>Calculator</h1>
@@ -324,7 +330,7 @@ export default class Calculator extends Component {
             <button id="equals" onClick={this.handleEqual} >=</button>
           </div>
         </div>
-        <footer>by <a href="https://github.com/Son-Tr" target='_blank'>Son-Tr</a></footer>
+        <footer>by <a href="https://github.com/Son-Tr" target='_blank' rel="noopener noreferrer">Son-Tr</a></footer>
       </div>
     );
   }

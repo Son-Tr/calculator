@@ -10,28 +10,36 @@ body {
   align-content: center;
   height: 100vh;
   margin: 0;
+  background: linear-gradient(90deg, #dda1f2, #8de2df);
 }
 
 .title {
   font-size: 4rem;
+  font-weight: 400;
+  font-style:normal ;
   margin: auto;
+  color: linear-gradient(90deg, #dda1f2, #8de2df);
 }
 
 /* ----------------------------------- box ---------------------------------- */
 .box {
-  border: 1px solid black;
   display: flex;
   justify-content: flex-end;
   flex-direction: column;
-  padding: 10px;
+  padding: 20px;
   border-radius: 5px;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  
 }
 input-results{
   height: 110px;
 }
 
 .formula {
-  font-size: 1.4rem;
+  height: 1rem;
+  font-size: 1.1rem;
+  line-height: 1rem;
   text-align: right;
   margin: auto 0 auto;
 }
@@ -42,7 +50,8 @@ input-results{
 }
 
 .output {
-  width: 99%;
+  height: 64px;
+  line-height: 64px;
   text-align: right;
   border: none;
   padding-right: 2px;
@@ -71,8 +80,8 @@ input-results{
 .grid-btn {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 5px;
-  margin: 0 5px;
+  gap: 10px;
+
 }
 
 
@@ -91,9 +100,19 @@ button {
   line-height: 26px;
   border-radius: 50%;
   cursor: pointer;
+  border: none;
 }
 
+footer{
+  color: black;
+  font-size: 1rem;
+  margin-top: 1rem;
+}
 
+footer a{
+ color:black;
+  text-decoration: none;
+}
 
 /* ----------------------------- responsibility ----------------------------- */
 

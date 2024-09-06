@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './Calculator.css';
-import { faDeleteLeft, faDivide, faMinus, faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
+import {  faDivide, faMinus, faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
@@ -212,7 +212,7 @@ export default class Calculator extends Component {
 
   /* ------------- fix the font-size base on the length of number ------------- */
   updateFontSize = (result) => {
-    let fontSizeClass = result.length > 7 ? 'small-font' : 'normal-font';
+    let fontSizeClass = result.length > 9 ? 'small-font' : 'normal-font';
     return fontSizeClass;
   };
 
@@ -283,7 +283,7 @@ export default class Calculator extends Component {
           <div className="grid-btn">
             <button id="clear" onClick={this.handleClickAc}>AC</button>
             <button id="back-space" onClick={this.handleBackSpace}>
-              <FontAwesomeIcon icon={faDeleteLeft} />
+             C
             </button>
             <button id="percent">%</button>
             <button id="divide" onClick={() => { this.handleClickOperation("/") }}>

@@ -101,14 +101,16 @@ export default class Calculator extends Component {
         isCheckNextNumber: true,
       });
     } else if (this.state.isCheckNextNumber) {
-      if (opera === "-"&& operation) {
+      let regex = /^(?:[^+\-*/]*[+\-*/]){2,}[^+\-*/]*$/
+      if (opera === "-" && !regex.test(operation)) {
         this.setState((preState) => ({
-          operation: preState.operation + opera
+          operation: `${preState.operation} ${opera}`
         }))
         return;
       }
       // Change operation if an operation button is pressed repeatedly
       this.setState({ operation: opera });
+
     } else if (operation && preNumber) {
       // If an operation exists, calculate and update the state
       let nextNumber = Number(resultCalculation);
@@ -131,25 +133,6 @@ export default class Calculator extends Component {
       });
     }
   };
-  checkCaseNegative = (operation, nextNumber) => {
-    switch (operation) {
-      case "+-":
-        operation = "-"
-        break;
-      case "--":
-        operation = "+"
-        break;
-      case "*-":
-        operation = "*"
-        break;
-      case "/-":
-        operation = "-"
-        break;
-      default:
-        return;
-    }
-    return operation
-  }
 
 
   /* ------------------------- handle click btn equal ------------------------- */
@@ -168,7 +151,14 @@ export default class Calculator extends Component {
       nextNumber = Number(resultCalculation)
       result = this.calculate(preNumber, operation, nextNumber)
     }
+    if (!result) {
+      console.log("result", result)
+      console.log("preNumber", preNumber)
+      console.log("operation", operation)
+      console.log("nextNumber", nextNumber)
 
+      return
+    }
     fontSizeClass = this.updateFontSize(result.toString())
 
     this.setState({
@@ -194,14 +184,14 @@ export default class Calculator extends Component {
   }
 
   /* -------------------------- hanlde click percent -------------------------- */
-  handleClickPercent=()=>{
+  handleClickPercent = () => {
     let { resultCalculation } = this.state;
     if (resultCalculation === "0" || resultCalculation === "") {
       return;
-    } else{
-      resultCalculation= (Number(resultCalculation)/100).toString()
+    } else {
+      resultCalculation = (Number(resultCalculation) / 100).toString()
     }
-    this.setState({ resultCalculation})
+    this.setState({ resultCalculation })
   }
 
 
@@ -229,19 +219,19 @@ export default class Calculator extends Component {
         result = Number(preNumber) / Number(nextNumber);
         break;
 
-      case "+-":
+      case "+ -":
         result = Number(preNumber) - Number(nextNumber);
         break;
 
-      case "--":
+      case "- -":
         result = Number(preNumber) + Number(nextNumber);
         break;
 
-      case "*-":
+      case "* -":
         result = Number(preNumber) * -Number(nextNumber);
         break;
 
-      case "/-":
+      case "/ -":
         result = Number(preNumber) / -Number(nextNumber);
         break;
 

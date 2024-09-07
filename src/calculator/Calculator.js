@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './Calculator.css';
-import {  faDivide, faMinus, faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
+import { faDivide, faMinus, faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 
@@ -13,7 +13,7 @@ export default class Calculator extends Component {
     super(props);
     this.state = {
       resultCalculation: '0', // Initialize as string for easier manipulation
-      preNumber: 0,
+      preNumber: null,
       nextNumber: 0,
       operation: '',
       fontSizeClass: 'normal-font', // Add state for font size class
@@ -38,7 +38,7 @@ export default class Calculator extends Component {
     if (isCheckEqual) {
       resultCalculation = num
       this.setState({
-        preNumber: 0,
+        preNumber: null,
         nextNumber: 0,
         operation: '',
         fontSizeClass: 'normal-font',
@@ -92,39 +92,64 @@ export default class Calculator extends Component {
     let { resultCalculation, preNumber, operation, isCheckEqual } = this.state;
 
     if (isCheckEqual) {
-        // Reset state after pressing `=` and then an operation
-        this.setState({
-            preNumber: Number(resultCalculation),
-            nextNumber: 0,
-            operation: opera,
-            isCheckEqual: false,
-            isCheckNextNumber: true,
-        });
+      // Reset state after pressing `=` and then an operation
+      this.setState({
+        preNumber: Number(resultCalculation),
+        nextNumber: 0,
+        operation: opera,
+        isCheckEqual: false,
+        isCheckNextNumber: true,
+      });
     } else if (this.state.isCheckNextNumber) {
-        // Change operation if an operation button is pressed repeatedly
-        this.setState({ operation: opera });
+      if (opera === "-"&& operation) {
+        this.setState((preState) => ({
+          operation: preState.operation + opera
+        }))
+        return;
+      }
+      // Change operation if an operation button is pressed repeatedly
+      this.setState({ operation: opera });
     } else if (operation && preNumber) {
-        // If an operation exists, calculate and update the state
-        let nextNumber = Number(resultCalculation);
-        preNumber = this.calculate(preNumber, operation, nextNumber);
+      // If an operation exists, calculate and update the state
+      let nextNumber = Number(resultCalculation);
+      preNumber = this.calculate(preNumber, operation, nextNumber);
 
-        this.setState({
-            preNumber,
-            nextNumber: 0,
-            resultCalculation: preNumber.toString(),
-            operation: opera,
-            isCheckNextNumber: true,
-        });
+      this.setState({
+        preNumber,
+        nextNumber: 0,
+        resultCalculation: preNumber.toString(),
+        operation: opera,
+        isCheckNextNumber: true,
+      });
     } else {
-        // Initial operation selection
-        preNumber = Number(resultCalculation);
-        this.setState({
-            preNumber,
-            operation: opera,
-            isCheckNextNumber: true,
-        });
+      // Initial operation selection
+      preNumber = Number(resultCalculation);
+      this.setState({
+        preNumber,
+        operation: opera,
+        isCheckNextNumber: true,
+      });
     }
-};
+  };
+  checkCaseNegative = (operation, nextNumber) => {
+    switch (operation) {
+      case "+-":
+        operation = "-"
+        break;
+      case "--":
+        operation = "+"
+        break;
+      case "*-":
+        operation = "*"
+        break;
+      case "/-":
+        operation = "-"
+        break;
+      default:
+        return;
+    }
+    return operation
+  }
 
 
   /* ------------------------- handle click btn equal ------------------------- */
@@ -155,6 +180,33 @@ export default class Calculator extends Component {
     })
   };
 
+  handleClickNegative = () => {
+    let { resultCalculation } = this.state;
+    if (resultCalculation === "0" || resultCalculation === "") {
+      return;
+    } else if (resultCalculation.includes("-")) {
+      resultCalculation = resultCalculation.replace(/-/g, "")
+    }
+    else {
+      resultCalculation = `-${resultCalculation}`;
+    }
+    this.setState({ resultCalculation })
+  }
+
+  /* -------------------------- hanlde click percent -------------------------- */
+  handleClickPercent=()=>{
+    let { resultCalculation } = this.state;
+    if (resultCalculation === "0" || resultCalculation === "") {
+      return;
+    } else{
+      resultCalculation= (Number(resultCalculation)/100).toString()
+    }
+    this.setState({ resultCalculation})
+  }
+
+
+  /* --------------------------- calculate function --------------------------- */
+
   calculate = (preNumber, operation, nextNumber) => {
     let result;
     switch (operation) {
@@ -176,10 +228,27 @@ export default class Calculator extends Component {
         }
         result = Number(preNumber) / Number(nextNumber);
         break;
+
+      case "+-":
+        result = Number(preNumber) - Number(nextNumber);
+        break;
+
+      case "--":
+        result = Number(preNumber) + Number(nextNumber);
+        break;
+
+      case "*-":
+        result = Number(preNumber) * -Number(nextNumber);
+        break;
+
+      case "/-":
+        result = Number(preNumber) / -Number(nextNumber);
+        break;
+
       default:
         return;  //do not perform any update if there is not operation
     }
-    return result
+    return result;
   }
 
 
@@ -220,7 +289,7 @@ export default class Calculator extends Component {
   handleClickAc = () => {
     this.setState({
       resultCalculation: '0',
-      preNumber: 0,
+      preNumber: null,
       nextNumber: 0,
       operation: '',
       fontSizeClass: 'normal-font',
@@ -235,7 +304,7 @@ export default class Calculator extends Component {
     if (isCheckEqual) { // after calculation reset state.
       this.setState({
         resultCalculation: "0",
-        preNumber: 0,
+        preNumber: null,
         nextNumber: 0,
         operation: '',
         fontSizeClass: 'normal-font',
@@ -270,7 +339,7 @@ export default class Calculator extends Component {
         <div className="box">
           <div className="input-results">
             <p className='formula'>
-              {this.formatNumber(preNumber)}
+              {preNumber === 0 && !operation ? " " : preNumber}
               <span className='operation'>
                 {operation}
               </span>
@@ -283,9 +352,9 @@ export default class Calculator extends Component {
           <div className="grid-btn">
             <button id="clear" onClick={this.handleClickAc}>AC</button>
             <button id="back-space" onClick={this.handleBackSpace}>
-             C
+              C
             </button>
-            <button id="percent">%</button>
+            <button id="percent" onClick={this.handleClickPercent}>%</button>
             <button id="divide" onClick={() => { this.handleClickOperation("/") }}>
               {DIVIDE}
             </button>
@@ -308,10 +377,10 @@ export default class Calculator extends Component {
             <button id="add" onClick={() => { this.handleClickOperation("+") }}>
               {PLUS}
             </button>
-            <button id="negative"  >+/-</button>
+            <button id="negative" onClick={this.handleClickNegative} >+/-</button>
 
             <button id="zero" onClick={() => this.handleClickNum(0)}>0</button>
-            <button id="dot" onClick={() => this.handleClickNum('.')}>.</button>
+            <button id="decimal" onClick={() => this.handleClickNum('.')}>.</button>
             <button id="equals" onClick={this.handleEqual} >=</button>
           </div>
         </div>

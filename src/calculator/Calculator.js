@@ -340,38 +340,67 @@ export default class Calculator extends Component {
             </p>
           </div>
           <div className="grid-btn">
-            <button id="clear" onClick={this.handleClickAc}>AC</button>
+            <button id="clear" onClick={this.handleClickAc}>
+              <span>AC</span>
+            </button>
             <button id="back-space" onClick={this.handleBackSpace}>
-              C
+              <span>C</span>
             </button>
-            <button id="percent" onClick={this.handleClickPercent}>%</button>
+            <button id="percent" onClick={this.handleClickPercent}>
+              <span>%</span>
+            </button>
             <button id="divide" onClick={() => { this.handleClickOperation("/") }}>
-              {DIVIDE}
+              <span>{DIVIDE}</span>
             </button>
-
-            <button id="seven" onClick={() => this.handleClickNum(7)}>7</button>
-            <button id="eight" onClick={() => this.handleClickNum(8)}>8</button>
-            <button id="nine" onClick={() => this.handleClickNum(9)}>9</button>
+            <button id="seven" onClick={() => this.handleClickNum(7)}>
+              <span>7</span>
+            </button>
+            <button id="eight" onClick={() => this.handleClickNum(8)}>
+              <span>8</span>
+            </button>
+            <button id="nine" onClick={() => this.handleClickNum(9)}>
+              <span>9</span>
+            </button>
             <button id="multiply" onClick={() => { this.handleClickOperation("*") }}>
-              {MULTIPLE}
+              <span>{MULTIPLE}</span>
             </button>
-            <button id="four" onClick={() => this.handleClickNum(4)}>4</button>
-            <button id="five" onClick={() => this.handleClickNum(5)}>5</button>
-            <button id="six" onClick={() => this.handleClickNum(6)}>6</button>
+            <button id="four" onClick={() => this.handleClickNum(4)}>
+              <span>4</span>
+            </button>
+            <button id="five" onClick={() => this.handleClickNum(5)}>
+              <span>5</span>
+            </button>
+            <button id="six" onClick={() => this.handleClickNum(6)}>
+              <span>6</span>
+            </button>
             <button id="subtract" onClick={() => { this.handleClickOperation("-") }}>
-              {SUBTRACT}
+              <span>{SUBTRACT}</span>
             </button>
-            <button id="one" onClick={() => this.handleClickNum(1)}>1</button>
-            <button id="two" onClick={() => this.handleClickNum(2)}>2</button>
-            <button id="three" onClick={() => this.handleClickNum(3)}>3</button>
+            <button id="one" onClick={() => this.handleClickNum(1)}>
+              <span>1</span>
+            </button>
+            <button id="two" onClick={() => this.handleClickNum(2)}>
+              <span> 2</span>
+            </button>
+            <button id="three" onClick={() => this.handleClickNum(3)}>
+              <span> 3</span>
+            </button>
             <button id="add" onClick={() => { this.handleClickOperation("+") }}>
-              {PLUS}
+              <span>{PLUS}</span>
             </button>
-            <button id="negative" onClick={this.handleClickNegative} >+/-</button>
+            <button id="negative" onClick={this.handleClickNegative} >
+              <span> +/-</span>
+            </button>
 
-            <button id="zero" onClick={() => this.handleClickNum(0)}>0</button>
-            <button id="decimal" onClick={() => this.handleClickNum('.')}>.</button>
-            <button id="equals" onClick={this.handleEqual} >=</button>
+            <button id="zero" onClick={() => this.handleClickNum(0)}>
+              <span>0</span>
+            </button>
+            <button id="decimal" onClick={() => this.handleClickNum('.')}>
+              <span>.</span>
+            </button>
+            <button id="equals" onClick={this.handleEqual} >
+              <span>=</span>
+            </button>
           </div>
         </div>
         <footer>by <a href="https://github.com/Son-Tr" target='_blank' rel="noopener noreferrer">Son-Tr</a></footer>

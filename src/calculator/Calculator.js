@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import './Calculator.css';
 import { faDivide, faMinus, faPlus, faXmark } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import Swal from 'sweetalert2'
+
 
 
 const PLUS = <FontAwesomeIcon icon={faPlus} />;
@@ -213,7 +215,12 @@ export default class Calculator extends Component {
 
       case "/":
         if (nextNumber === 0) {
-          alert("Cannot divide by zero");
+          Swal.fire({
+            title: 'Error!',
+            text: 'Cannot divide by zero',
+            icon: 'error',
+            confirmButtonText: 'Ok'
+          })
           break;
         }
         result = Number(preNumber) / Number(nextNumber);
@@ -233,6 +240,15 @@ export default class Calculator extends Component {
 
       case "/ -":
         result = Number(preNumber) / -Number(nextNumber);
+        if (nextNumber === 0) {
+          Swal.fire({
+            title: 'Error!',
+            text: 'Cannot divide by zero',
+            icon: 'error',
+            confirmButtonText: 'Ok'
+          })
+          break;
+        }
         break;
 
       default:

@@ -34,5 +34,5 @@ You can view the live demo of the project here: [https://calculator-project-son-
 - Use the `+/-` button to toggle the sign of the current number.
 - Use `%` to calculate the percentage of the current number.
 
-##Acknowledgments
+## Acknowledgments
 - Thanks to **FreeCodeCamp** for providing an excellent learning environment.

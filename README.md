@@ -21,3 +21,18 @@ This is a simple calculator application built using **React.js**, **HTML**, **CS
 - **JavaScript:** For functionality and logic.
 - **Font Awesome:** For icons representing operations.
 - **SweetAlert2:** For alert notifications when invalid operations are performed.
+- 
+## Live Demo
+You can view the live demo of the project here: [https://calculator-project-son-tr.vercel.app/]
+
+## Usage
+- Click on the number buttons to input values.
+- Use the operation buttons `(+, -, ×, ÷)` to perform calculations.
+- Click `=` to get the result of the calculation.
+- Click `AC` to reset the calculator.
+- Click `C` to delete the last input.
+- Use the `+/-` button to toggle the sign of the current number.
+- Use `%` to calculate the percentage of the current number.
+
+##Acknowledgments
+- Thanks to **FreeCodeCamp** for providing an excellent learning environment.

@@ -21,7 +21,7 @@ This is a simple calculator application built using **React.js**, **HTML**, **CS
 - **JavaScript:** For functionality and logic.
 - **Font Awesome:** For icons representing operations.
 - **SweetAlert2:** For alert notifications when invalid operations are performed.
-- 
+
 ## Live Demo
 You can view the live demo of the project here: [https://calculator-project-son-tr.vercel.app/]
 
